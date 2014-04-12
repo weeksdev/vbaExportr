@@ -102,13 +102,16 @@ namespace vbaExportr
                     {
                         System.IO.File.WriteAllText(System.IO.Path.Combine(selectedPath + "\\" + project.projectName + "." + file.componentName + ".bas"), file.code);
                     }
-                }
-                //if including excel file is checked and it isn't already in the final location (meaning the file we are extracting from then copy it over)
-                if (this.includeExcelFile.IsChecked == true && this.excelFile.filePath != System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName))
-                    System.IO.File.Copy(this.excelFile.filePath, System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName), true);
 
-                System.Windows.MessageBox.Show("Extract Complete!");
-                System.Diagnostics.Process.Start(selectedPath);
+                    //if including excel file is checked and it isn't already in the final location (meaning the file we are extracting from then copy it over)
+                    if (this.includeExcelFile.IsChecked == true && this.excelFile.filePath != System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName))
+                        System.IO.File.Copy(this.excelFile.filePath, System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName), true);
+
+                    //if saving worksheets as csv for diff is checked then complete that task too
+                    Export.WorkbookToCsv(this.excelFile.filePath, selectedPath);
+                    System.Windows.MessageBox.Show("Extract Complete!");
+                    System.Diagnostics.Process.Start(selectedPath);
+                }
             }
         }
     }

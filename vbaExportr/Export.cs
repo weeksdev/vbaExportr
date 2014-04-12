@@ -116,5 +116,19 @@ namespace vbaExportr
             excel = null;
             return responseObjects;
         }
+
+        public static void WorkbookToCsv(string pathToExcel, string pathToWrite)
+        {
+            Excel.Application excel = new Excel.Application();
+            var workbook = excel.Workbooks.Open(pathToExcel, false, true, Type.Missing, Type.Missing, Type.Missing, true, Type.Missing, Type.Missing, false, false, Type.Missing, false, true, Type.Missing);
+            foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in workbook.Sheets)
+            {
+                sheet.SaveAs(pathToWrite + "\\" + workbook.Name + "." + sheet.Name + ".csv", FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlCSV);
+            }
+
+            workbook.Close(false);
+            excel.Quit();
+            excel = null;
+        }
     }
 }
