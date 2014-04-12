@@ -83,6 +83,18 @@ namespace vbaExportr
             }
             else 
             {
+                try
+                {
+                    if (this.deleteBasFiles.IsChecked == true)
+                        foreach (var matchingFile in System.IO.Directory.GetFiles(selectedPath, "*.bas"))
+                            System.IO.File.Delete(matchingFile);
+                }
+                catch
+                {
+                    System.Windows.MessageBox.Show("Error deleting previous bas files.");
+                    return;
+                }
+
                 foreach (var project in this.excelFile.Projects)
                 {
                     foreach (var file in project.basFiles)
@@ -92,6 +104,9 @@ namespace vbaExportr
                 }
                 if (this.includeExcelFile.IsChecked==true)
                     System.IO.File.Copy(this.excelFile.filePath, System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName), true);
+
+                System.Windows.MessageBox.Show("Extract Complete!");
+                System.Diagnostics.Process.Start(selectedPath);
             }
         }
     }

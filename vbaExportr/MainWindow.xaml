@@ -9,6 +9,7 @@
                 <Label Name="fileNameFld" Height="25" Width="400" Content="File Name:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                 <Label Name="numberOfProjectsFld" Height="25" Width="400" Content="Project Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,05,0"/>
                 <Label Name="numberOfModules" Height="25" Width="400" Content="Module Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,60,0,0"/>
+                
                 <Button Style="{DynamicResource MetroCircleButtonStyle}" Height="50" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="30" Content="{StaticResource appbar_download}" Click="Button_Click_2"/>
             </Grid>
         </controls:Flyout>
@@ -16,5 +17,6 @@
         <controls:MetroProgressBar  Value="0" VerticalAlignment="Bottom" Height="20"/>
         <Button Style="{DynamicResource SquareButtonStyle}" Content="Browse" HorizontalAlignment="Left" Margin="214,11,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
         <CheckBox Name="includeExcelFile" Content="Include Excel File In Extract Location" Height="20" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50" IsChecked="True"/>
+        <CheckBox Name="deleteBasFiles" Content="Delete existing extracted (*.bas) files" Height="20" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,75" IsChecked="True"/>
     </Grid>
 </controls:MetroWindow>
