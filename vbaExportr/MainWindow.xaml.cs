@@ -73,8 +73,9 @@ namespace vbaExportr
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
-            dlg.RootFolder = Environment.SpecialFolder.Personal;
+            //dlg.RootFolder = Environment.SpecialFolder.Personal;
             dlg.Description = "Please select extract folder...";
+            dlg.SelectedPath = new System.IO.FileInfo(this.excelFile.filePath).Directory.FullName;
             dlg.ShowDialog();
             string selectedPath = dlg.SelectedPath;
             if (selectedPath == "")
@@ -103,7 +104,7 @@ namespace vbaExportr
                     }
                 }
                 //if including excel file is checked and it isn't already in the final location (meaning the file we are extracting from then copy it over)
-                if (this.includeExcelFile.IsChecked == true && this.excelFile.fileName != System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName))
+                if (this.includeExcelFile.IsChecked == true && this.excelFile.filePath != System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName))
                     System.IO.File.Copy(this.excelFile.filePath, System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName), true);
 
                 System.Windows.MessageBox.Show("Extract Complete!");
