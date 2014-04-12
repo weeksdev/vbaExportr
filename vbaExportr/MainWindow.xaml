@@ -1,0 +1,20 @@
+﻿<controls:MetroWindow x:Class="vbaExportr.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="http://metro.mahapps.com/winfx/xaml/controls"
+        Title="Exprtr" Height="500" Width="800" ShowIconOnTitleBar="False">
+    <Grid>
+        <controls:Flyout Name="exportFlyout" Header="Workbook VBA Information" HorizontalAlignment="Left" VerticalAlignment="Top" Position="Right" Width="475" IsModal="True">
+            <Grid>
+                <Label Name="fileNameFld" Height="25" Width="400" Content="File Name:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                <Label Name="numberOfProjectsFld" Height="25" Width="400" Content="Project Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,30,05,0"/>
+                <Label Name="numberOfModules" Height="25" Width="400" Content="Module Count:" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,60,0,0"/>
+                <Button Style="{DynamicResource MetroCircleButtonStyle}" Height="50" Width="50" HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="30" Content="{StaticResource appbar_download}" Click="Button_Click_2"/>
+            </Grid>
+        </controls:Flyout>
+        <TextBox Height="29" Width="182" Name="uploadFileFld" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,10,0,0" IsReadOnly="True" Text="Select a file..."/>
+        <controls:MetroProgressBar  Value="0" VerticalAlignment="Bottom" Height="20"/>
+        <Button Style="{DynamicResource SquareButtonStyle}" Content="Browse" HorizontalAlignment="Left" Margin="214,11,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+        <CheckBox Name="includeExcelFile" Content="Include Excel File In Extract Location" Height="20" Width="250" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,50" IsChecked="True"/>
+    </Grid>
+</controls:MetroWindow>
