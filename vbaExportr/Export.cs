@@ -39,6 +39,7 @@ namespace vbaExportr
         {
             List<ResponseObject> responseObjects = new List<ResponseObject>();
             var excel = new Excel.Application();
+            var excelStillOpenLame = System.Diagnostics.Process.GetProcessesByName("EXCEL")[0];
             excel.DisplayAlerts = false;
             Console.WriteLine("Opening Workbook...");
             var workbook = excel.Workbooks.Open(fileName, false, true, Type.Missing, Type.Missing, Type.Missing, true, Type.Missing, Type.Missing, false, false, Type.Missing, false, true, Type.Missing);
@@ -71,6 +72,8 @@ namespace vbaExportr
                         minor = reference.Minor,
                         name = reference.Name
                     });
+                    System.Runtime.InteropServices.Marshal.ReleaseComObject(reference);
+                    reference = null;
                 }
                 responseObj.references = references;
                 //get all code modules and mark instead if it was protected and this couldn't be accomplished.
@@ -103,31 +106,47 @@ namespace vbaExportr
                             }
                             basFile.code = moduleCode;
                             files.Add(basFile);
-
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(vbComponent);
+                            vbComponent = null;
+                            System.Runtime.InteropServices.Marshal.ReleaseComObject(componentCode);
+                            componentCode = null;
                         }
                     }
                 }
+                System.Runtime.InteropServices.Marshal.ReleaseComObject(project);
+                project = null;
                 responseObj.basFiles = files;
                 responseObjects.Add(responseObj);
             }
-
+            
             workbook.Close(false);
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(workbook);
+            workbook = null;
+
             excel.Quit();
+            System.Runtime.InteropServices.Marshal.ReleaseComObject(excel);
             excel = null;
+            if (!excelStillOpenLame.CloseMainWindow())
+            {
+                excelStillOpenLame.Kill();
+            }
             return responseObjects;
         }
 
         public static void WorkbookToCsv(string pathToExcel, string pathToWrite)
         {
             Excel.Application excel = new Excel.Application();
+            excel.DisplayAlerts = false;
             var workbook = excel.Workbooks.Open(pathToExcel, false, true, Type.Missing, Type.Missing, Type.Missing, true, Type.Missing, Type.Missing, false, false, Type.Missing, false, true, Type.Missing);
+            string workbookName = workbook.Name;
             foreach (Microsoft.Office.Interop.Excel.Worksheet sheet in workbook.Sheets)
             {
-                sheet.SaveAs(pathToWrite + "\\" + workbook.Name + "." + sheet.Name + ".csv", FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlCSV);
+                sheet.SaveAs(pathToWrite + "\\" + workbookName + "." + sheet.Name + ".csv", FileFormat: Microsoft.Office.Interop.Excel.XlFileFormat.xlCSV);
             }
 
             workbook.Close(false);
             excel.Quit();
+            workbook = null;
             excel = null;
         }
     }

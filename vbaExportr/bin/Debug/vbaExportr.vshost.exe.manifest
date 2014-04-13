@@ -67,14 +67,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="vbaExportr.exe" size="602112">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="vbaExportr.exe" size="602624">
       <assemblyIdentity name="vbaExportr" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>WnGbUYjGJiGcvIb9cPHS6/lOHySkWDPEq0npUnu3/kk=</dsig:DigestValue>
+        <dsig:DigestValue>q8eh/h+WNprZD8NXuEN9477ivoDfLzvY8HbICnZJJ0k=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
