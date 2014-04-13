@@ -38,80 +38,96 @@ namespace vbaExportr
 
         ExcelFile excelFile = new ExcelFile();
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        private void GetFile(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog ofd = new OpenFileDialog();
-            ofd.AddExtension = true;
-            ofd.Filter = "Excel Files (*.xlsm,*.xls)|*.xlsm;*.xls";
-            ofd.ShowDialog();
-            this.uploadFileFld.Text = ofd.FileName;
-            if (ofd.FileName != "")
+            try
             {
-                this.exportFlyout.IsOpen = true;
-                this.excelFile.Projects = Export.Open(ofd.FileName);
-                this.excelFile.fileName = ofd.FileName.Split('\\').Last();
-                this.fileNameFld.Content = "File Name: " + this.excelFile.fileName;
-                this.excelFile.filePath = ofd.FileName;
-                this.numberOfProjectsFld.Content = "Project Count: " + this.excelFile.Projects.Count;
-                int totalBasFiles = 0;
-                bool protectedContent = false;
-                foreach (var project in this.excelFile.Projects)
+                OpenFileDialog ofd = new OpenFileDialog();
+                ofd.AddExtension = true;
+                ofd.Filter = "Excel Files (*.xlsm,*.xls)|*.xlsm;*.xls";
+                ofd.ShowDialog();
+                this.uploadFileFld.Text = ofd.FileName;
+                if (ofd.FileName != "")
                 {
-                    if (project.isProtected)
-                        protectedContent = true;
-                    foreach (var file in project.basFiles)
+                    this.exportFlyout.IsOpen = true;
+                    this.excelFile.Projects = Export.Open(ofd.FileName);
+                    this.excelFile.fileName = ofd.FileName.Split('\\').Last();
+                    this.fileNameFld.Content = "File Name: " + this.excelFile.fileName;
+                    this.excelFile.filePath = ofd.FileName;
+                    this.numberOfProjectsFld.Content = "Project Count: " + this.excelFile.Projects.Count;
+                    int totalBasFiles = 0;
+                    bool protectedContent = false;
+                    foreach (var project in this.excelFile.Projects)
                     {
-                        totalBasFiles += 1;
+                        if (project.isProtected)
+                            protectedContent = true;
+                        foreach (var file in project.basFiles)
+                        {
+                            totalBasFiles += 1;
+                        }
                     }
+                    this.numberOfModules.Content = "Module Count: " + totalBasFiles;
+                    if (protectedContent)
+                        System.Windows.MessageBox.Show("Protected content detected. Please remove protection to extract content.");
                 }
-                this.numberOfModules.Content = "Module Count: " + totalBasFiles;
-                if (protectedContent)
-                    System.Windows.MessageBox.Show("Protected content detected. Please remove protection to extract content.");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("An unknown error occured.");
+                System.IO.File.AppendAllText("errlog.txt", DateTime.Now.ToString() + ":" + ex.Message + Environment.NewLine);
             }
         }
 
-        private void Button_Click_2(object sender, RoutedEventArgs e)
+        private void ExtractFile(object sender, RoutedEventArgs e)
         {
-            System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
-            //dlg.RootFolder = Environment.SpecialFolder.Personal;
-            dlg.Description = "Please select extract folder...";
-            dlg.SelectedPath = new System.IO.FileInfo(this.excelFile.filePath).Directory.FullName;
-            dlg.ShowDialog();
-            string selectedPath = dlg.SelectedPath;
-            if (selectedPath == "")
+            try
             {
-                System.Windows.MessageBox.Show("No path selected.");
-            }
-            else 
-            {
-                try
+                System.Windows.Forms.FolderBrowserDialog dlg = new System.Windows.Forms.FolderBrowserDialog();
+                //dlg.RootFolder = Environment.SpecialFolder.Personal;
+                dlg.Description = "Please select extract folder...";
+                dlg.SelectedPath = new System.IO.FileInfo(this.excelFile.filePath).Directory.FullName;
+                dlg.ShowDialog();
+                string selectedPath = dlg.SelectedPath;
+                if (selectedPath == "")
                 {
-                    if (this.deleteBasFiles.IsChecked == true)
-                        foreach (var matchingFile in System.IO.Directory.GetFiles(selectedPath, "*.bas"))
-                            System.IO.File.Delete(matchingFile);
+                    System.Windows.MessageBox.Show("No path selected.");
                 }
-                catch
+                else
                 {
-                    System.Windows.MessageBox.Show("Error deleting previous bas files.");
-                    return;
-                }
-
-                foreach (var project in this.excelFile.Projects)
-                {
-                    foreach (var file in project.basFiles)
+                    try
                     {
-                        System.IO.File.WriteAllText(System.IO.Path.Combine(selectedPath + "\\" + project.projectName + "." + file.componentName + ".bas"), file.code);
+                        if (this.deleteBasFiles.IsChecked == true)
+                            foreach (var matchingFile in System.IO.Directory.GetFiles(selectedPath, "*.bas"))
+                                System.IO.File.Delete(matchingFile);
+                    }
+                    catch
+                    {
+                        System.Windows.MessageBox.Show("Error deleting previous bas files.");
+                        return;
                     }
 
-                    //if including excel file is checked and it isn't already in the final location (meaning the file we are extracting from then copy it over)
-                    if (this.includeExcelFile.IsChecked == true && this.excelFile.filePath != System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName))
-                        System.IO.File.Copy(this.excelFile.filePath, System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName), true);
+                    foreach (var project in this.excelFile.Projects)
+                    {
+                        foreach (var file in project.basFiles)
+                        {
+                            System.IO.File.WriteAllText(System.IO.Path.Combine(selectedPath + "\\" + project.projectName + "." + file.componentName + ".bas"), file.code);
+                        }
 
-                    //if saving worksheets as csv for diff is checked then complete that task too
-                    Export.WorkbookToCsv(this.excelFile.filePath, selectedPath);
-                    System.Windows.MessageBox.Show("Extract Complete!");
-                    System.Diagnostics.Process.Start(selectedPath);
+                        //if including excel file is checked and it isn't already in the final location (meaning the file we are extracting from then copy it over)
+                        if (this.includeExcelFile.IsChecked == true && this.excelFile.filePath != System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName))
+                            System.IO.File.Copy(this.excelFile.filePath, System.IO.Path.Combine(selectedPath + "\\" + this.excelFile.fileName), true);
+
+                        //if saving worksheets as csv for diff is checked then complete that task too
+                        Export.WorkbookToCsv(this.excelFile.filePath, selectedPath);
+                        System.Windows.MessageBox.Show("Extract Complete!");
+                        System.Diagnostics.Process.Start(selectedPath);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show("An unknown error occured.");
+                System.IO.File.AppendAllText("errlog.txt", DateTime.Now.ToString() + ":" + ex.Message + Environment.NewLine);
             }
         }
     }
